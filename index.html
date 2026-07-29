@@ -3,14 +3,27 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Load — dziennik treningowy na iPhone’a</title>
+<title>Load — Twój partner w treningach</title>
 <meta name="description" content="Load zapisuje serie, liczy objętość, pilnuje przerw i pamięta rekordy. Superserie, kalkulator talerzy, RPE i szacowany 1RM. Bez konta, bez serwera. Beta w TestFlight wkrótce.">
-<meta property="og:title" content="Load — dziennik treningowy na iPhone’a">
-<meta property="og:description" content="Wpisujesz ciężar, odhaczasz serię, resztę robi Load. Bez konta, bez serwera, bez rankingów.">
+<meta property="og:title" content="Load — Twój partner w treningach">
+<meta property="og:description" content="Minimalistyczny w formie i zaawansowany w funkcjach.">
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#08080C">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%239180FF'/%3E%3Cstop offset='1' stop-color='%230A84FF'/%3E%3C/linearGradient%3E%3Cmask id='m'%3E%3Cpath d='M38 88.5C26 88.5 19.5 80 19.5 67 19.5 55.5 24 47.5 30.5 42.5 29.6 37.5 28.9 31.5 28.5 26 28.5 18.5 33.5 14 41 14L59 14C66.5 14 71.5 18.5 71.5 26 71.1 31.5 70.4 37.5 69.5 42.5 76 47.5 80.5 55.5 80.5 67 80.5 80 74 88.5 62 88.5Z' fill='white'/%3E%3Crect x='36' y='21' width='28' height='13' rx='6' fill='black'/%3E%3Cpolyline points='33,78 47.5,65 57.5,71 69,58' fill='none' stroke='black' stroke-width='4.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cg fill='black'%3E%3Ccircle cx='33' cy='78' r='5'/%3E%3Ccircle cx='47.5' cy='65' r='5'/%3E%3Ccircle cx='57.5' cy='71' r='5'/%3E%3Ccircle cx='69' cy='58' r='5'/%3E%3C/g%3E%3C/mask%3E%3C/defs%3E%3Crect width='100' height='100' fill='url(%23g)' mask='url(%23m)'/%3E%3C/svg%3E">
+<link rel="preload" as="font" type="font/woff2" href="fonts/MonaSans.woff2" crossorigin>
 <style>
+/* Mona Sans — ten sam krój i ten sam plik co w aplikacji (OFL 1.1, github/mona-sans).
+   Font zmienny: oś wagi 200–900, oś szerokości 75–125%. Deklarowany zakres `font-weight`
+   sprawia, że przeglądarka steruje osią `wght` wprost — dzięki temu nie trafiamy w pomieszane
+   nazwy instancji (domyślna to ExtraLight), co jest znaną pułapką tego kroju. */
+@font-face{
+  font-family:"Mona Sans";
+  src:url("fonts/MonaSans.woff2") format("woff2");
+  font-weight:200 900;
+  font-stretch:75% 125%;
+  font-style:normal;
+  font-display:swap;
+}
 :root{
   --bg:#08080C;
   --bg2:#0E0E14;
@@ -28,8 +41,8 @@
   --done:#46C457;
   --gold:#E8B84B;
   --warm:#F59E3D;
-  --font:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
-  --round:ui-rounded,"SF Pro Rounded",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  --font:"Mona Sans",-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --round:var(--font);
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-padding-top:80px}
@@ -96,7 +109,7 @@ h2{font-size:clamp(1.8rem,3.6vw,2.55rem);font-weight:700;letter-spacing:-.022em;
 .badge .dot{width:7px;height:7px;border-radius:50%;background:var(--grad);box-shadow:0 0 10px rgba(145,128,255,.8)}
 @media (prefers-reduced-motion:no-preference){.badge .dot{animation:pulse 2.6s ease-in-out infinite}}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-h1{font-size:clamp(2.4rem,5.6vw,3.9rem);font-weight:800;letter-spacing:-.032em;line-height:1.05;
+h1{font-size:clamp(2.3rem,5.2vw,3.6rem);font-weight:800;letter-spacing:-.032em;line-height:1.06;
   text-wrap:balance;margin-top:26px}
 .hero .lead{font-size:18px}
 .cta-row{display:flex;flex-wrap:wrap;gap:14px;margin-top:32px}
@@ -129,11 +142,13 @@ h1{font-size:clamp(2.4rem,5.6vw,3.9rem);font-weight:800;letter-spacing:-.032em;l
 /* Plakietki kotwiczone do krawędzi telefonu (nie do kolumny), żeby nie zasłaniały ekranu.
    Ruch idzie właściwością `translate`, więc nie kasuje przesunięcia w `transform`. */
 .pill-float{position:absolute;z-index:4;display:flex;align-items:center;gap:8px;font-size:12.5px;
-  font-weight:600;white-space:nowrap;border-radius:999px;padding:9px 15px;background:rgba(20,20,27,.9);
-  border:1px solid var(--line2);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
-  box-shadow:0 14px 34px rgba(0,0,0,.5)}
-.pill-float.right{left:50%;transform:translateX(118px)}
-.pill-float.left{right:50%;transform:translateX(-118px)}
+  font-weight:600;line-height:1.35;max-width:186px;border-radius:999px;padding:9px 15px;
+  background:rgba(20,20,27,.9);border:1px solid var(--line2);
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);box-shadow:0 14px 34px rgba(0,0,0,.5)}
+/* Zaczepione o krawędź telefonu i ograniczone szerokością, żeby przy dłuższym nagłówku
+   nie wchodziły w kolumnę z tekstem. */
+.pill-float.right{left:50%;transform:translateX(100px)}
+.pill-float.left{right:50%;transform:translateX(-100px)}
 .pill-float.up{color:var(--done)}
 .pill-float.gold{color:var(--gold)}
 @media (prefers-reduced-motion:no-preference){.pill-float{animation:bob 6s ease-in-out infinite}}
@@ -352,7 +367,7 @@ footer{border-top:1px solid var(--line);padding:44px 0 56px}
       <a href="#prywatnosc">Prywatność</a>
       <a href="#faq">FAQ</a>
     </div>
-    <a class="btn btn-primary btn-sm" href="#testy">Chcę testować</a>
+    <a class="btn btn-primary btn-sm" href="#testy">Chcę przetestować</a>
   </div>
 </nav>
 
@@ -361,16 +376,16 @@ footer{border-top:1px solid var(--line);padding:44px 0 56px}
   <div class="wrap hero-grid">
     <div>
       <span class="badge"><span class="dot"></span>iOS · beta w TestFlight wkrótce</span>
-      <h1>Dziennik siłowy,<br><span class="grad-text">który nie wchodzi w drogę.</span></h1>
-      <p class="lead">Wpisujesz ciężar, odhaczasz serię i wracasz do sztangi. Load w tym czasie
-        liczy objętość, odpala przerwę, podpowiada wynik z poprzedniego razu i sam zaznacza rekord.
-        Nie ma tu kont, znajomych ani rankingów — jest Twój zeszyt, tyle że nie gubi kartek.</p>
+      <h1>Partner treningowy,<br><span class="grad-text">który podąża za Twoimi postępami.</span></h1>
+      <p class="lead">Wpisujesz ciężar, odhaczasz serię i wracasz do ćwiczenia. Load robi swoje
+        w tle: liczy objętość, odmierza przerwy, pamięta poprzednie wyniki i zaznacza rekordy.
+        A Ty robisz swoje. Bez rozpraszaczy i bez niepotrzebnego szumu.</p>
       <div class="cta-row">
-        <a class="btn btn-primary" href="#testy">Chcę testować
+        <a class="btn btn-primary" href="#testy">Chcę przetestować
           <svg class="arr" width="15" height="15" viewBox="0 0 16 16" aria-hidden="true"><path d="M2 8h11M9 3.5 13.5 8 9 12.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-        <a class="btn btn-ghost" href="#sala">Zobacz, jak działa</a>
+        <a class="btn btn-ghost" href="#sala">Zobacz, jak działa Load</a>
       </div>
-      <p class="hero-note">iPhone · iOS 18 lub nowszy · po polsku i angielsku</p>
+      <p class="hero-note">iOS 18 lub nowszy</p>
     </div>
 
     <div class="stage" data-tilt>
@@ -380,9 +395,9 @@ footer{border-top:1px solid var(--line);padding:44px 0 56px}
         <img class="shot fade" id="heroB" src="shots/03-log-dark.jpg" width="540" height="1172" alt="" aria-hidden="true">
         <img class="frame" src="shots/frame-600.png" width="600" height="1252" alt="" aria-hidden="true">
       </div>
-      <span class="stage-cap" id="heroCap"><b>Ekran główny</b> · plan na dziś</span>
-      <span class="pill-float gold right" style="top:15%">Rekord zapala się na złoto</span>
-      <span class="pill-float left" style="bottom:24%">Przerwa startuje sama</span>
+      <span class="stage-cap" id="heroCap">Ekran główny i plan na dziś</span>
+      <span class="pill-float gold right" style="top:15%">Nie przegap nowego rekordu</span>
+      <span class="pill-float left" style="bottom:24%">Wszystko masz zawsze pod ręką</span>
     </div>
   </div>
 
@@ -392,15 +407,15 @@ footer{border-top:1px solid var(--line);padding:44px 0 56px}
         <span>191 ćwiczeń z opisami</span><span>superserie</span><span>kalkulator talerzy</span>
         <span>RPE i szacowany 1RM</span><span>kilogramy albo funty</span><span>auto-rozgrzewka</span>
         <span>stoper serii na czas</span><span>Live Activity</span><span>widżety i ekran blokady</span>
-        <span>Siri i Skróty</span><span>6 motywów</span><span>eksport PDF i CSV</span>
-        <span>polski i angielski</span><span>VoiceOver i Dynamic Type</span>
+        <span>Siri i Skróty</span><span>6 motywów kolorystycznych</span><span>eksport PDF i CSV</span>
+        <span>Dynamic Type</span><span>VoiceOver i Dostępność</span>
       </div>
       <div aria-hidden="true">
         <span>191 ćwiczeń z opisami</span><span>superserie</span><span>kalkulator talerzy</span>
         <span>RPE i szacowany 1RM</span><span>kilogramy albo funty</span><span>auto-rozgrzewka</span>
         <span>stoper serii na czas</span><span>Live Activity</span><span>widżety i ekran blokady</span>
-        <span>Siri i Skróty</span><span>6 motywów</span><span>eksport PDF i CSV</span>
-        <span>polski i angielski</span><span>VoiceOver i Dynamic Type</span>
+        <span>Siri i Skróty</span><span>6 motywów kolorystycznych</span><span>eksport PDF i CSV</span>
+        <span>Dynamic Type</span><span>VoiceOver i Dostępność</span>
       </div>
     </div>
   </div>
@@ -408,25 +423,26 @@ footer{border-top:1px solid var(--line);padding:44px 0 56px}
 
 <section class="manifesto reveal">
   <div class="wrap">
-    <p>Żadnych znajomych, kciuków w górę i odznak za wejście do apki.<br><b>Tylko Ty i ciężar.</b></p>
-    <small>Load ma jedno zadanie: prowadzić Twój dziennik tak, żebyś między seriami
-      nie musiał się nad nim zastanawiać. Co nie służy temu na sali, nie weszło do środka.</small>
+    <p>Nie zbierasz lajków. Zbierasz kilogramy.<br><b>Reszta nie ma znaczenia.</b></p>
+    <small>Load ma jedno zadanie: pomagać Ci śledzić trening, nie odciągać od niego uwagi.
+      Dlatego jest tu tylko to, co naprawdę przydaje się na siłowni.</small>
   </div>
 </section>
 
 <section class="story" id="sala">
   <div class="wrap duo">
     <div class="reveal">
-      <span class="eyebrow">Na sali</span>
-      <h2>Ekran, przy którym się stoi z ciężarem w ręku</h2>
+      <span class="eyebrow">Twój notatnik</span>
+      <h2>Ekran stworzony z myślą o treningu</h2>
       <ul class="points">
-        <li><b>Własna klawiatura zamiast systemowej.</b> Duże pola, przecinek tam, gdzie trzeba,
-          „Gotowe” w zasięgu kciuka — i 20 punktów martwej strefy nad tacką, żeby przestrzelony
-          tap nie zaliczył Ci serii.</li>
-        <li><b>Kolumna „Poprz.” pamięta za Ciebie.</b> Widzisz, ile było ostatnim razem,
-          bez wchodzenia w historię. Asystent od razu podstawia sensowny ciężar na dziś.</li>
-        <li><b>Rekord widać, zanim go zapiszesz.</b> Liczba robi się złota już w trakcie wpisywania,
-          a po odhaczeniu serii sama rusza przerwa — z odliczaniem na ekranie blokady i w Dynamic Island.</li>
+        <li><b>Wpisujesz wynik i wracasz do treningu.</b> Własna klawiatura ma większe przyciski,
+          „Gotowe” zawsze pod kciukiem i zabezpieczenia przed przypadkowym stuknięciem. Dzięki temu
+          telefon nie przeszkadza wtedy, gdy liczy się kolejna seria.</li>
+        <li><b>Nie musisz pamiętać poprzedniego treningu.</b> Load pokaże ostatni wynik i zaproponuje
+          ciężar, od którego warto zacząć. Wszystko masz pod ręką, bez przeklikiwania się przez historię.</li>
+        <li><b>O rekordzie dowiesz się od razu.</b> Gdy pobijesz swój wynik, Load pokaże to jeszcze
+          przed zapisaniem serii. Potem automatycznie uruchomi przerwę i będzie odliczał czas
+          na ekranie blokady oraz w Dynamic Island.</li>
       </ul>
     </div>
     <div class="stage reveal" data-tilt>
@@ -441,11 +457,11 @@ footer{border-top:1px solid var(--line);padding:44px 0 56px}
 <section class="story" id="talerze">
   <div class="wrap duo flip">
     <div class="reveal">
-      <span class="eyebrow">Rzeczy, które robi się przy sztandze</span>
-      <h2>Nie liczysz talerzy w głowie</h2>
-      <p class="lead">Kiedy wpisujesz ciężar w ćwiczeniu ze sztangą, pod klawiaturą pojawia się
-        rozpiska na jedną stronę gryfu. Przelicza się w trakcie pisania. Poniżej ta sama matematyka —
-        pociągnij suwak.</p>
+      <span class="eyebrow">Skup się na ćwiczeniach, które masz przed sobą</span>
+      <h2>Nie licz talerzy w głowie</h2>
+      <p class="lead">Wpisujesz ciężar, a Load od razu pokazuje, jakie talerze założyć na jedną
+        stronę gryfu. Wszystko liczy się automatycznie podczas pisania — bez zatrzymywania treningu
+        i szybkiej matematyki między seriami.</p>
 
       <div class="calc" id="calc">
         <div class="calc-top">
@@ -456,8 +472,6 @@ footer{border-top:1px solid var(--line);padding:44px 0 56px}
         <input id="calcRange" type="range" min="20" max="200" step="2.5" value="82.5">
         <div class="bar" id="calcBar" aria-hidden="true"></div>
         <p class="calc-out" id="calcOut"></p>
-        <p class="calc-hint">Talerze 25 / 20 / 15 / 10 / 5 / 2,5 / 1,25 kg. W aplikacji wybierzesz też
-          gryf 15 albo 10 kg — i funty, jeśli tak masz opisane talerze.</p>
       </div>
     </div>
     <div class="stage reveal" data-tilt>
@@ -465,7 +479,7 @@ footer{border-top:1px solid var(--line);padding:44px 0 56px}
         <img class="shot" src="shots/02-plates-dark.jpg" width="540" height="1172" alt="Klawiatura numeryczna w Load z paskiem kalkulatora talerzy: „Na stronę: 20 + 1×25 + 1×5 + 1×1.25”, a wpisany ciężar 82,5 kg świeci na złoto, bo bije dotychczasowy rekord.">
         <img class="frame" src="shots/frame-600.png" width="600" height="1252" alt="" aria-hidden="true">
       </div>
-      <span class="pill-float right" style="bottom:16%">Liczy się w trakcie pisania</span>
+      <span class="pill-float right" style="bottom:16%">Liczy, bo Ty nie musisz</span>
     </div>
   </div>
 </section>
@@ -474,16 +488,15 @@ footer{border-top:1px solid var(--line);padding:44px 0 56px}
   <div class="wrap duo">
     <div class="reveal">
       <span class="eyebrow">Superserie</span>
-      <h2>Dwa ćwiczenia na zmianę, bez kombinowania</h2>
+      <h2>Dwa ćwiczenia, jedno po drugim</h2>
       <ul class="points">
-        <li><b>Łączysz ćwiczenie z następnym</b> — w menu karty, bez szukania gestu pod
-          przytrzymaniem. Nad blokiem pojawia się klamra i widoczny przycisk „Rozłącz”.</li>
-        <li><b>Load przeplata serie rundami:</b> pierwsza seria A, pierwsza B, druga A, druga B.
-          Kursor sam skacze na partnera, więc nie szukasz, gdzie jesteś.</li>
-        <li><b>W środku rundy nie ma przerwy</b> — przejście do drugiego ćwiczenia jest przerwą.
-          Timer rusza dopiero, gdy runda się domknie.</li>
-        <li><b>Rozgrzewki zostają przy swoim ćwiczeniu</b> i idą przodem, zamiast wchodzić
-          w przeplatanie.</li>
+        <li><b>Łączysz dwa ćwiczenia w parę</b> i od tego momentu Load pilnuje reszty. Serie
+          przechodzą automatycznie: A, B, A, B — dokładnie tak, jak powinien wyglądać trening
+          w superserii.</li>
+        <li><b>Nie szukasz kolejnego ćwiczenia i nie zastanawiasz się, gdzie jesteś.</b>
+          Po zakończeniu jednej serii Load przenosi Cię od razu do drugiej.</li>
+        <li><b>Przerwa pojawia się dopiero wtedy, gdy zamkniesz całą rundę.</b> W środku superserii
+          po prostu przechodzisz dalej.</li>
       </ul>
     </div>
     <div class="stage reveal" data-tilt>
@@ -498,63 +511,63 @@ footer{border-top:1px solid var(--line);padding:44px 0 56px}
 <section class="pro">
   <div class="wrap">
     <div class="reveal">
-      <span class="eyebrow">Dla wymagających</span>
-      <h2>Drobiazgi, po których widać, że ktoś tego używa</h2>
+      <span class="eyebrow">Dla tych, którzy potrzebują więcej</span>
+      <h2>Load jest minimalistyczny w formie, ale bogaty w funkcje</h2>
     </div>
     <div class="grid">
       <div class="card reveal">
         <span class="ic"><svg viewBox="0 0 24 24"><path d="M3 9v6M7 6v12M17 6v12M21 9v6M7 12h10"/></svg></span>
-        <h3>Typy serii i RPE</h3>
-        <p>Rozgrzewkowa, robocza, dropset, do upadku. Rozgrzewki nie wchodzą do objętości ani
-          do rekordów. Z RPE Load liczy szacowany ciężar maksymalny.</p>
+        <h3>Serie, które mają znaczenie</h3>
+        <p>Rozgrzewka, seria robocza, dropset czy seria do upadku. Load wie, czym różnią się poszczególne
+          typy serii. Dzięki RPE pomaga też oszacować Twój maksymalny ciężar bez dodatkowych obliczeń.</p>
       </div>
       <div class="card reveal">
         <span class="ic"><svg viewBox="0 0 24 24"><path d="M12 3c1.6 4 6 5.6 6 9.5a6 6 0 0 1-12 0C6 10 7.6 8 9 6.8c.2 1.6 1 2.9 2.2 3.2C10.6 7.6 11.1 5 12 3Z"/></svg></span>
-        <h3>Auto-rozgrzewka</h3>
-        <p>Jedno tapnięcie i przed serią roboczą siada rampa 40/60/80%, zaokrąglona do talerzy.
-          Przy sztandze nie schodzi poniżej pustego gryfu.</p>
+        <h3>Rozgrzewka bez zastanawiania</h3>
+        <p>Jedno tapnięcie i masz gotową rampę przed serią roboczą. Load dobiera ciężary, zaokrągla je
+          do dostępnych talerzy i pamięta, że sztanga zaczyna się od pustego gryfu.</p>
       </div>
       <div class="card reveal">
         <span class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M10 2h4"/></svg></span>
-        <h3>Stoper serii na czas</h3>
-        <p>Deska i zwis nie wymagają drugiej apki — przy komórce „czas” w tacce klawiatury
-          czeka stoper. Zatrzymanie wpisuje sekundy do serii.</p>
+        <h3>Czas też jest wynikiem</h3>
+        <p>Deska, zwis albo inne ćwiczenie na czas? Nie potrzebujesz kolejnej aplikacji. Uruchom stoper
+          podczas wpisywania serii, a wynik zapisze się razem z resztą treningu.</p>
       </div>
       <div class="card reveal">
         <span class="ic"><svg viewBox="0 0 24 24"><path d="M12 4v16M5 8h14M6 12h12M7 16h10"/></svg></span>
-        <h3>Kilogramy albo funty</h3>
-        <p>Przełącznik zmienia tylko to, co widzisz — historia zostaje w kilogramach, więc nic
-          się nie przelicza „na zawsze”. Kroki progresji idą w Twojej jednostce.</p>
+        <h3>Trenuj tak, jak Ci wygodnie</h3>
+        <p>Kilogramy czy funty? Wybór należy do Ciebie. Zmieniasz sposób wyświetlania, ale historia
+          treningów pozostaje spójna. Twoje wyniki zawsze zostają na swoim miejscu.</p>
       </div>
       <div class="card reveal">
         <span class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 9h18M8 2v4M16 2v4M8 14h4"/></svg></span>
-        <h3>Plan z oknem czasu</h3>
-        <p>Przypisujesz plan do dni tygodnia i ustawiasz, ile tygodni ma trwać. Na karcie widać
-          „tydz. 3/8”, a po zakończeniu blok znika z ekranu głównego.</p>
+        <h3>Plan, który trzyma rytm</h3>
+        <p>Ustaw plan, wybierz dni i zdecyduj, ile tygodni ma trwać. Load pokazuje, gdzie jesteś
+          i pomaga utrzymać ciągłość bez dodatkowego pilnowania.</p>
       </div>
       <div class="card reveal">
         <span class="ic"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/><circle cx="19" cy="18" r="2.4"/></svg></span>
-        <h3>Historia, którą można poprawić</h3>
-        <p>Pomyliłeś ciężar sprzed tygodnia? Wchodzisz w trening w Historii i edytujesz go tym
-          samym ekranem co na żywo. Zaległy trening dopiszesz z datą wstecz.</p>
+        <h3>Historia, która nie jest zamknięta</h3>
+        <p>Pomyliłeś ciężar albo zapomniałeś zapisać trening? Możesz wrócić do historii, poprawić wynik
+          lub dodać zaległy trening z właściwą datą.</p>
       </div>
       <div class="card reveal">
         <span class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/></svg></span>
-        <h3>Widżety i ekran blokady</h3>
-        <p>Plan na dziś, cel tygodnia i postęp ćwiczenia na ekranie głównym; na blokadzie
-          pierścień i licznik. Stuknięcie otwiera dokładnie ten ekran, o który chodzi.</p>
+        <h3>Informacje tam, gdzie ich potrzebujesz</h3>
+        <p>Plan na dziś, cel tygodnia i postęp ćwiczenia są zawsze pod ręką. Nawet wtedy, gdy aplikacja
+          jest zamknięta, dzięki widżetom.</p>
       </div>
       <div class="card reveal">
         <span class="ic"><svg viewBox="0 0 24 24"><path d="M12 3a3 3 0 0 1 3 3v5a3 3 0 0 1-6 0V6a3 3 0 0 1 3-3Z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></span>
-        <h3>Siri i Skróty</h3>
-        <p>„Zacznij trening w Load” otwiera log z dzisiejszym planem. Możesz też powiedzieć nazwę
-          planu albo poprosić o szybki trening bez planu.</p>
+        <h3>Mniej dotykania, więcej treningu</h3>
+        <p>Dzięki Siri i Skrótom możesz rozpocząć trening jednym poleceniem. Load otworzy właściwy plan
+          albo pozwoli zacząć od pustej kartki.</p>
       </div>
       <div class="card reveal">
         <span class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3a14 14 0 0 0 0 18M12 3a14 14 0 0 1 0 18M3.5 9h17M3.5 15h17"/></svg></span>
-        <h3>Polski i angielski</h3>
-        <p>Cała aplikacja, razem z opisami 191 ćwiczeń, mówi w języku telefonu. Nazwy ćwiczeń
-          tłumaczą się na ekranie, ale historia trzyma się jednego klucza — nic się nie rozjeżdża.</p>
+        <h3>Twój język, Twoje ćwiczenia</h3>
+        <p>Load działa po polsku i angielsku razem z bazą 191 ćwiczeń. Nazwy dopasują się do języka
+          telefonu, a historia treningów pozostanie uporządkowana.</p>
       </div>
     </div>
   </div>
@@ -566,14 +579,16 @@ footer{border-top:1px solid var(--line);padding:44px 0 56px}
       <span class="eyebrow">Postępy</span>
       <h2>Jedno spojrzenie zamiast arkusza</h2>
       <ul class="points">
-        <li><b>Pierścień tygodnia</b> pokazuje objętość i treningi naraz. Ustawiasz cel — na przykład
-          trzy treningi — i po ostatnim pierścień domyka się na zielono. Bez fajerwerków.</li>
-        <li><b>Mapa mięśni</b> maluje partie, które w tym tygodniu pracowały. Od razu widać,
-          czy plecy znowu wygrały z nogami.</li>
-        <li><b>Trend każdego ćwiczenia</b> — ciężar albo szacowany 1RM na wykresie, ze stuknięciem
-          w punkt, żeby zobaczyć konkretny trening.</li>
-        <li><b>Pomiary ciała</b> z własnymi wykresami i celami. Wagę Load może dociągać
-          z Apple Health, żebyś nie przepisywał jej ręcznie.</li>
+        <li><b>Twój tydzień w jednym spojrzeniu.</b> Pierścień tygodnia pokazuje, ile zrobiłeś
+          i czy trzymasz swój rytm. Ustawiasz cel, na przykład trzy treningi w tygodniu, a po jego
+          realizacji widzisz domknięty pierścień. Bez punktów, bez rywalizacji. Po prostu Twój progres.</li>
+        <li><b>Wiesz, które partie naprawdę pracują.</b> Mapa mięśni pokazuje, na czym skupiłeś się
+          w ostatnich dniach. Od razu zauważysz, czy nogi dostają tyle samo uwagi co klatka i plecy.</li>
+        <li><b>Każde ćwiczenie ma swoją historię.</b> Sprawdź, jak zmieniał się ciężar albo szacowany
+          1RM. Dotknij dowolnego punktu na wykresie i wróć do konkretnego treningu, który za nim stoi.</li>
+        <li><b>Twoje pomiary w jednym miejscu.</b> Zapisuj cele, obserwuj zmiany i śledź postęp
+          w czasie. Load może też pobierać wagę z Apple Health, żebyś nie musiał wpisywać jej
+          za każdym razem.</li>
       </ul>
     </div>
     <div class="stage reveal" data-tilt>
@@ -590,23 +605,26 @@ footer{border-top:1px solid var(--line);padding:44px 0 56px}
   <div class="wrap duo">
     <div class="reveal">
       <span class="eyebrow">Kiedy trenujesz z trenerem</span>
-      <h2>Plan od trenerki wklejasz w całości</h2>
-      <p class="lead">Load powstał dlatego, że plany od trenerki lądowały w notatkach i na
-        Messengerze, a przepisywanie ich do apki było najnudniejszą częścią treningu.
-        Więc wkleja się je w całości.</p>
+      <h2>Plan od trenera wklejasz w całości</h2>
+      <p class="lead">Load powstał z prostego powodu. Plany treningowe często kończą w notatkach,
+        wiadomościach albo PDF-ach, a najgorszą częścią jest przepisywanie ich do aplikacji.
+        Dlatego tutaj po prostu wklejasz gotowy plan.</p>
       <ul class="points">
-        <li>Rozpoznaje zapis, którego ludzie faktycznie używają: <b>3x8 60kg</b>, listy serii
-          <b>x8 x6 x5</b>, zakresy <b>3x8–10</b>, ciężary rozpisane po myślniku <b>60-70-80</b>.</li>
-        <li>Zdania w stylu „daj znać, jak poszło” zostają zdaniami — nie zamieniają się w ćwiczenie.</li>
-        <li>Nierozpoznane ćwiczenie wybierasz z bazy na ekranie potwierdzenia. Nic nie zapisuje się
-          po cichu.</li>
-        <li>W drugą stronę: raport tygodnia jako PDF albo tekst — treningi, objętość, rekordy i waga.</li>
+        <li>Nie musisz zmieniać swoich przyzwyczajeń. Load rozpoznaje zapisy, których naprawdę
+          używasz: <b>3x8 60 kg</b>, serie <b>x8 x6 x5</b>, zakresy <b>3x8–10</b> czy kolejne
+          ciężary <b>60-70-80</b>.</li>
+        <li>Komentarze, wskazówki i wiadomości typu „daj znać, jak poszło” zostają tekstem.
+          Load nie próbuje na siłę zamieniać wszystkiego w ćwiczenia.</li>
+        <li>Jeśli czegoś nie rozpozna, pokaże Ci to na ekranie potwierdzenia. Wybierasz właściwe
+          ćwiczenie i dopiero wtedy zapisujesz plan.</li>
+        <li>Po zakończonym tygodniu wygenerujesz raport w formie PDF albo tekstu. Treningi,
+          objętość, rekordy i pomiary w jednym miejscu.</li>
       </ul>
     </div>
     <div class="reveal">
       <div class="paste">
         <div class="bubble">
-          <div class="from">Wiadomość · trenerka</div>
+          <div class="from">Wiadomość od trenera</div>
           Środa – push<br>
           1. Wyciskanie na ławce 3x6 80kg<br>
           2. OHP x8 x8 x6 40<br>
@@ -640,14 +658,17 @@ footer{border-top:1px solid var(--line);padding:44px 0 56px}
   <div class="wrap duo flip">
     <div class="reveal">
       <span class="eyebrow">Baza ćwiczeń</span>
-      <h2>191 ćwiczeń, każde z opisem</h2>
+      <h2>Ćwiczenia na wyciągnięcie telefonu</h2>
       <ul class="points">
-        <li><b>Kroki wykonania i „na co uważać”</b> przy każdym wbudowanym ćwiczeniu — po polsku
-          i po angielsku. Możesz je nadpisać własnym opisem, jeśli robisz coś po swojemu.</li>
-        <li><b>Przeglądasz po partiach albo alfabetycznie</b> z paskiem A–Z na krawędzi.
-          Wyszukiwarka łapie też nazwy angielskie, więc „bench” znajdzie wyciskanie na ławce.</li>
-        <li><b>Własne ćwiczenia</b> zapisujesz raz i zostają: partia główna, partie pomocnicze,
-          sprzęt, typ pomiaru (ciężar, powtórzenia albo czas) i cel.</li>
+        <li><b>191 ćwiczeń, które znasz i rozumiesz.</b> Każde ćwiczenie w Load ma własny opis,
+          wskazówki wykonania i rzeczy, na które warto uważać. Po polsku i po angielsku. A jeśli
+          robisz coś po swojemu, możesz dodać własne uwagi.</li>
+        <li><b>Znajdź ćwiczenie bez szukania.</b> Przeglądaj bazę według partii mięśniowych albo
+          alfabetycznie. Pasek A–Z pozwala szybko przeskoczyć do konkretnej pozycji, a wyszukiwarka
+          rozumie także angielskie nazwy. Wpisujesz „bench” i trafiasz tam, gdzie trzeba.</li>
+        <li><b>Twoje ćwiczenia też mają swoje miejsce.</b> Stwórz własne ćwiczenie i zapisz je raz.
+          Dodaj partie mięśniowe, sprzęt, sposób pomiaru i cel. Potem wszystko działa tak samo,
+          jak w przypadku ćwiczeń z bazy.</li>
       </ul>
     </div>
     <div class="stage reveal" data-tilt>
@@ -665,12 +686,15 @@ footer{border-top:1px solid var(--line);padding:44px 0 56px}
       <span class="eyebrow">Historia</span>
       <h2>Dziennik, a nie tabela</h2>
       <ul class="points">
-        <li><b>Miesiąc po miesiącu</b>, z podsumowaniem w nagłówku sekcji: ile treningów,
-          ile kilogramów. Nagłówek zostaje na górze przy przewijaniu.</li>
-        <li><b>Wiersz czyta się jak wpis</b>: dzień, nazwa treningu, rekordy, a niżej godzina,
-          czas trwania i objętość. Jest też widok kalendarza, jeśli wolisz siatkę.</li>
-        <li><b>Notatki zostają przy treningu</b> — „bolał bark”, „następnym razem 85” —
-          i wracają do Ciebie przy kolejnym podejściu do tego ćwiczenia.</li>
+        <li><b>Load zapisuje trening tak, jak go pamiętasz.</b> Miesiąc po miesiącu,
+          z podsumowaniem na górze: ile razy trenowałeś i ile kilogramów zrobiłeś. Najważniejsze
+          informacje zostają zawsze pod ręką podczas przewijania.</li>
+        <li><b>Każdy trening ma swoją historię.</b> Nie patrzysz na anonimowy wiersz tabeli.
+          Widzisz konkretny wpis: dzień, nazwę treningu, rekordy, czas trwania i objętość. Jeśli
+          wolisz spojrzeć szerzej, możesz przełączyć się na widok kalendarza.</li>
+        <li><b>Notatki zostają przy treningu.</b> „Bolał bark”. „Następnym razem 85”.
+          „Dodać serię”. Twoje uwagi zostają przy treningu i pojawią się ponownie, gdy wrócisz
+          do tego ćwiczenia.</li>
       </ul>
     </div>
     <div class="stage reveal" data-tilt>
@@ -686,24 +710,26 @@ footer{border-top:1px solid var(--line);padding:44px 0 56px}
   <div class="wrap">
     <div class="priv-card reveal">
       <span class="eyebrow">Prywatność</span>
-      <h2>Load nie ma serwera, więc nie ma dokąd wysyłać Twoich danych</h2>
-      <p class="lead">To nie jest obietnica na przyszłość, tylko opis kodu: w całej aplikacji nie ma
-        ani jednego zapytania sieciowego. Nie ma analityki, nie ma bibliotek reklamowych, nie ma
-        logowania. Dziennik leży w pamięci telefonu.</p>
-      <p class="lead">Jeśli włączysz backup, trafia do Twojego iCloudu — do prywatnej bazy na Twoim
-        koncie Apple, do której nie mam dostępu. Wagę z Apple Health czytam tylko wtedy, gdy sam
-        o to poprosisz, i wyłącznie do odczytu. Podsumowania od Apple Intelligence liczą się
-        na urządzeniu. Nic z tego nie wychodzi poza telefon.</p>
+      <h2>Twoje dane zostają u Ciebie</h2>
+      <p class="lead">Load nie wysyła Twoich treningów na żaden serwer. Nie ma konta do założenia,
+        logowania ani miejsca, w którym ktoś przechowuje Twoją historię. Twój dziennik żyje
+        na Twoim telefonie. Nie znajdziesz tu analityki, bibliotek reklamowych ani ukrytego
+        zbierania danych. Aplikacja działa lokalnie, dokładnie tam, gdzie jej potrzebujesz.</p>
+      <p class="lead">Jeśli włączysz backup, kopia trafia bezpośrednio do Twojego prywatnego iCloud.
+        Do Twojego konta Apple, nie do nas. Nie mamy dostępu do Twoich treningów.</p>
+      <p class="lead">Integracje działają tylko wtedy, gdy tego chcesz. Wagę z Apple Health Load
+        odczytuje wyłącznie na Twoje polecenie i tylko do odczytu. Podsumowania tworzone przez
+        Apple Intelligence powstają na urządzeniu.</p>
+      <p class="lead">Twój trening jest Twój. I tak powinno zostać.</p>
       <div class="priv-row">
-        <span class="priv-pill">Zero zapytań sieciowych</span>
         <span class="priv-pill">Bez konta i logowania</span>
-        <span class="priv-pill">Bez analityki i reklam</span>
+        <span class="priv-pill">Bez reklam</span>
         <span class="priv-pill">iCloud tylko na Twoje życzenie</span>
         <span class="priv-pill">Eksport i kasowanie w każdej chwili</span>
       </div>
-      <p class="priv-note">Szczegóły — co dokładnie powstaje na urządzeniu i co się dzieje z adresem,
-        na który napiszesz w sprawie bety — opisuje
-        <a href="prywatnosc.html">polityka prywatności</a>.</p>
+      <p class="priv-note">Opisujemy dokładnie, jakie dane powstają na urządzeniu, jak działają
+        integracje oraz co dzieje się z wiadomościami wysyłanymi w sprawie bety. Szczegóły
+        znajdziesz w <a href="prywatnosc.html">polityce prywatności</a>.</p>
     </div>
   </div>
 </section>
@@ -713,10 +739,10 @@ footer{border-top:1px solid var(--line);padding:44px 0 56px}
   <div class="wrap">
     <div class="beta-card reveal">
       <span class="eyebrow">Beta</span>
-      <h2>Szukam osób do testów</h2>
-      <p class="lead">Napisz jedno zdanie — odezwę się z zaproszeniem do TestFlight, jak tylko
-        ruszy beta. Przyda się informacja, czy trenujesz w kilogramach czy w funtach i czy robisz
-        superserie; to pierwsze rzeczy, które chcę sprawdzić na cudzych treningach.</p>
+      <h2>Chcesz przetestować Load zanim będzie dostępny publicznie?</h2>
+      <p class="lead">Gdy beta ruszy, odezwę się z zaproszeniem do TestFlight. Daj znać tylko,
+        czy trenujesz w kilogramach czy funtach i czy robisz superserie — to pierwsze rzeczy,
+        które chcę zobaczyć w prawdziwych treningach.</p>
       <div class="beta-cta" id="betaCta">
         <a class="btn btn-primary" id="mailBtn"
            href="mailto:loadworkoutapp@icloud.com?subject=Chc%C4%99%20testowa%C4%87%20Load&body=Cze%C5%9B%C4%87!%20Chc%C4%99%20przetestowa%C4%87%20Load%20w%20TestFlight.%0A%0AiPhone%3A%20%0ATrenuj%C4%99%20w%3A%20kg%20%2F%20lb%0A">
@@ -745,49 +771,55 @@ footer{border-top:1px solid var(--line);padding:44px 0 56px}
     <div class="faq-list reveal">
       <details>
         <summary>Kiedy ruszają testy?</summary>
-        <p>Aplikacja jest po stronie funkcji gotowa i przechodzi ostatnie szlify. Data bety nie jest
-          jeszcze ustalona — kto napisze wcześniej, dostanie zaproszenie w pierwszej turze.</p>
+        <p>Aplikacja jest już funkcjonalnie gotowa i przechodzi ostatnie poprawki. Data bety nie jest
+          jeszcze ustalona, ale osoby, które zgłoszą się wcześniej, dostaną zaproszenie
+          w pierwszej kolejności.</p>
       </details>
       <details>
         <summary>Ile będzie kosztować?</summary>
-        <p>Na premierę Load będzie darmowy, bez paywalla i bez limitu treningów. Później może
-          dojść płatny dodatek dla zaawansowanych, ale dziennik — logowanie, plany, historia,
-          postępy — ma zostać bezpłatny.</p>
+        <p>Na start Load będzie darmowy. Bez paywalla i bez limitu treningów. W przyszłości mogą
+          pojawić się dodatkowe funkcje dla bardziej zaawansowanych użytkowników, ale sam dziennik
+          treningowy, historia, plany i postępy pozostaną dostępne bez opłat.</p>
       </details>
       <details>
-        <summary>Co z moimi danymi, jeśli przestanę używać apki?</summary>
-        <p>Wszystko możesz wyeksportować: pełną kopię do pliku JSON, historię do CSV i raporty do PDF.
-          Usunięcie aplikacji kasuje dane z telefonu; jeśli miałeś włączony iCloud, kasujesz je
-          w ustawieniach swojego konta Apple. Nie zostaje nic po mojej stronie, bo nic tam nie trafia.</p>
+        <summary>Co stanie się z moimi danymi, jeśli przestanę używać aplikacji?</summary>
+        <p>Twoje dane są Twoje. Możesz je w każdej chwili wyeksportować jako kopię JSON, historię CSV
+          albo raport PDF. Po usunięciu aplikacji dane z telefonu zostają usunięte. Jeśli korzystasz
+          z iCloud, zarządzasz kopią bezpośrednio ze swojego konta Apple. Po stronie Load nic
+          nie zostaje, bo nic tam nie trafia.</p>
       </details>
       <details>
-        <summary>Czym to się różni od Hevy albo Stronga?</summary>
-        <p>Brakiem konta, brakiem części społecznościowej i tym, że jest po polsku — razem z opisami
-          ćwiczeń. Load jest mniejszy z założenia: nie ma feedu, wyzwań ani rankingów, za to ma
-          rzeczy, które przydają się przy sztandze, jak kalkulator talerzy czy superserie.</p>
+        <summary>Czym to się różni od innych aplikacji treningowych?</summary>
+        <p>Load powstał z innego założenia. Nie ma kont, feedu, wyzwań ani rankingów. To prywatny
+          dziennik treningowy, który skupia się na tym, co dzieje się między seriami. Jest po polsku,
+          ma opisy ćwiczeń i funkcje stworzone pod realny trening, takie jak kalkulator talerzy
+          czy obsługa superserii.</p>
       </details>
       <details>
         <summary>Jakie są wymagania?</summary>
-        <p>iPhone z iOS 18 albo nowszym. Na iOS 26 dochodzi pełny wygląd Liquid Glass i widżety
-          na ekranie blokady. Apple Watch na razie nie ma — to plan na później.</p>
+        <p>Load działa na iPhonie z iOS 18 lub nowszym. Apple Watch na razie nie jest obsługiwany,
+          ale jest to kierunek na przyszłość.</p>
       </details>
       <details>
         <summary>Będzie wersja na Androida albo w przeglądarce?</summary>
-        <p>Nie planuję. Live Activity, widżety, Skróty i Apple Health działają dobrze tylko natywnie,
-          a pisanie tego samego drugi raz oznaczałoby gorszą wersję obu.</p>
+        <p>Na ten moment nie planuję. Load korzysta z funkcji, które najlepiej działają natywnie
+          na iPhonie: Live Activities, widżetów, Skrótów i Apple Health. Budowanie osobnych wersji
+          oznaczałoby kompromisy, a celem jest stworzenie najlepszej wersji tej aplikacji.</p>
       </details>
       <details>
         <summary>Skąd wziął się Load?</summary>
-        <p>Z własnej potrzeby. Trenuję z trenerką, plany przychodziły w wiadomościach, a żadna
-          z apek, których próbowałem, nie była na tyle prosta, żeby chciało mi się jej używać między
-          seriami. Więc powstał dziennik, którego szukałem — z estetyką bliższą Gentler Streak
-          niż tabelce w Excelu.</p>
+        <p>Z własnej potrzeby. Trenuję z trenerką, a plany często trafiały do wiadomości.
+          Próbowałem różnych aplikacji, ale żadna nie była na tyle prosta i wygodna, żebym chciał
+          po nią sięgać między seriami.</p>
+        <p>Dlatego powstał Load — dziennik treningowy, którego sam szukałem. Prosty, spokojny
+          i bardziej przypominający dobrze zaprojektowane narzędzie niż tabelę z Excela.</p>
       </details>
       <details>
         <summary>Czy w środku jest coś cudzego?</summary>
-        <p>Dwie rzeczy: krój Mona Sans i anatomiczne mapy mięśni. Obie są na wolnych licencjach,
-          a pełne noty znajdziesz na stronie <a href="licencje.html">licencji</a>. Reszta,
-          razem z opisami ćwiczeń, jest napisana od zera.</p>
+        <p>Tak. Korzystam z kroju Mona Sans oraz anatomicznych map mięśni. Oba elementy są dostępne
+          na otwartych licencjach, a pełne informacje znajdują się na stronie
+          <a href="licencje.html">licencji</a>. Reszta aplikacji, w tym opisy ćwiczeń, została
+          przygotowana od podstaw.</p>
       </details>
     </div>
   </div>
@@ -824,7 +856,7 @@ if (APP_STORE_URL) {
   document.getElementById("betaCta").style.display = "none";
   document.querySelector("#testy h2").textContent = "Load jest w App Store";
   document.querySelector("#testy .lead").textContent =
-    "Pobierz i zacznij prowadzić swój dziennik. Bez konta, bez abonamentu na start.";
+    "Pobierz i zacznij prowadzić dziennik swoich treningów.";
 }
 
 /* Kopiowanie adresu */
@@ -889,9 +921,9 @@ if (motionOK && matchMedia("(hover:hover) and (pointer:fine)").matches) {
 const heroB = document.getElementById("heroB");
 const heroCap = document.getElementById("heroCap");
 const heroSlides = [
-  { src: "shots/03-log-dark.jpg", cap: "<b>Aktywny trening</b> · rekord i przerwa" },
-  { src: "shots/05-progress-dark.jpg", cap: "<b>Postępy</b> · tydzień i mapa mięśni" },
-  { src: "shots/01-hub-dark.jpg", cap: "<b>Ekran główny</b> · plan na dziś" }
+  { src: "shots/03-log-dark.jpg", cap: "Aktywny trening" },
+  { src: "shots/05-progress-dark.jpg", cap: "Twoje postępy" },
+  { src: "shots/01-hub-dark.jpg", cap: "Ekran główny i plan na dziś" }
 ];
 if (motionOK) {
   let i = 0;
@@ -926,7 +958,7 @@ const pl = (n) => n.toString().replace(".", ",");
 function renderPlates(total) {
   valEl.textContent = pl(total);
   if (total < BAR) {
-    outEl.textContent = "Mniej niż pusty gryf — tu sztanga nie pomoże.";
+    outEl.textContent = "Mniej niż pusty gryf";
     barEl.innerHTML = '<span class="rod"></span>';
     return;
   }

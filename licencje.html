@@ -7,11 +7,24 @@
 <meta name="description" content="Licencje i noty o prawach autorskich dla oprogramowania używanego w aplikacji Load: krój Mona Sans (OFL 1.1) i biblioteka MuscleMap (MIT).">
 <meta name="theme-color" content="#08080C">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%239180FF'/%3E%3Cstop offset='1' stop-color='%230A84FF'/%3E%3C/linearGradient%3E%3Cmask id='m'%3E%3Cpath d='M38 88.5C26 88.5 19.5 80 19.5 67 19.5 55.5 24 47.5 30.5 42.5 29.6 37.5 28.9 31.5 28.5 26 28.5 18.5 33.5 14 41 14L59 14C66.5 14 71.5 18.5 71.5 26 71.1 31.5 70.4 37.5 69.5 42.5 76 47.5 80.5 55.5 80.5 67 80.5 80 74 88.5 62 88.5Z' fill='white'/%3E%3Crect x='36' y='21' width='28' height='13' rx='6' fill='black'/%3E%3Cpolyline points='33,78 47.5,65 57.5,71 69,58' fill='none' stroke='black' stroke-width='4.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cg fill='black'%3E%3Ccircle cx='33' cy='78' r='5'/%3E%3Ccircle cx='47.5' cy='65' r='5'/%3E%3Ccircle cx='57.5' cy='71' r='5'/%3E%3Ccircle cx='69' cy='58' r='5'/%3E%3C/g%3E%3C/mask%3E%3C/defs%3E%3Crect width='100' height='100' fill='url(%23g)' mask='url(%23m)'/%3E%3C/svg%3E">
+<link rel="preload" as="font" type="font/woff2" href="fonts/MonaSans.woff2" crossorigin>
 <style>
+/* Mona Sans — ten sam krój i ten sam plik co w aplikacji (OFL 1.1, github/mona-sans).
+   Font zmienny: oś wagi 200–900, oś szerokości 75–125%. Deklarowany zakres `font-weight`
+   sprawia, że przeglądarka steruje osią `wght` wprost — dzięki temu nie trafiamy w pomieszane
+   nazwy instancji (domyślna to ExtraLight), co jest znaną pułapką tego kroju. */
+@font-face{
+  font-family:"Mona Sans";
+  src:url("fonts/MonaSans.woff2") format("woff2");
+  font-weight:200 900;
+  font-stretch:75% 125%;
+  font-style:normal;
+  font-display:swap;
+}
 :root{
   --bg:#08080C;--panel:#14141B;--ink:#F4F3F8;--sub:#A6A4B6;--faint:#6A6880;
   --violet:#9180FF;--blue-soft:#4BA3FF;--line:rgba(255,255,255,.08);--line2:rgba(255,255,255,.15);
-  --font:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --font:"Mona Sans",-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
   --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
 }
 *{margin:0;padding:0;box-sizing:border-box}
@@ -88,9 +101,10 @@ footer{border-top:1px solid var(--line);padding:34px 0 56px;margin-top:48px}
 <header class="head">
   <div class="wrap">
     <h1>Licencje</h1>
-    <p class="intro">Load jest napisany od zera w Swift i SwiftUI, bez zewnętrznych zależności
-      i menedżerów pakietów. Dwa elementy pochodzą jednak spoza projektu i są udostępnione
-      na wolnych licencjach — poniżej pełne noty, których te licencje wymagają.</p>
+    <p class="intro">Load został w całości napisany od podstaw w Swift i SwiftUI. Projekt nie
+      korzysta z zewnętrznych zależności ani menedżerów pakietów. Dwa wykorzystane elementy
+      pochodzą spoza projektu i są udostępniane na wolnych licencjach. Poniżej znajdują się
+      wymagane informacje licencyjne.</p>
   </div>
 </header>
 
@@ -98,13 +112,17 @@ footer{border-top:1px solid var(--line);padding:34px 0 56px;margin-top:48px}
 
   <h2>Mona Sans</h2>
   <p class="meta">Krój pisma · SIL Open Font License 1.1</p>
-  <p>Cała typografia aplikacji, razem z widżetami, jest złożona krojem Mona Sans.</p>
+  <p>Cała typografia aplikacji, razem z widżetami, jest złożona krojem Mona Sans. Tą samą
+    krojówką złożona jest ta strona.</p>
   <ul>
     <li><b>Copyright 2022 The Mona Sans Project Authors</b>
       (<a href="https://github.com/github/mona-sans" rel="noopener">github.com/github/mona-sans</a>),
       z zastrzeżoną nazwą kroju „Mona”.</li>
     <li>Krój jest osadzony w aplikacji w wersji niezmodyfikowanej, a plik licencji
       (<code>MonaSans-OFL.txt</code>) jest dołączony do pakietu aplikacji.</li>
+    <li>Na tej stronie ten sam plik jest serwowany w formacie WOFF2 (bez zmian w zestawie znaków
+      ani osiach kroju), a licencja leży obok niego:
+      <a href="fonts/MonaSans-OFL.txt">MonaSans-OFL.txt</a>.</li>
     <li>Nazwa „Mona” nie jest używana do promowania Load; autorzy kroju nie są w żaden sposób
       związani z aplikacją.</li>
   </ul>

@@ -8,12 +8,25 @@
 <meta name="theme-color" content="#08080C">
 <meta name="robots" content="index,follow">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%239180FF'/%3E%3Cstop offset='1' stop-color='%230A84FF'/%3E%3C/linearGradient%3E%3Cmask id='m'%3E%3Cpath d='M38 88.5C26 88.5 19.5 80 19.5 67 19.5 55.5 24 47.5 30.5 42.5 29.6 37.5 28.9 31.5 28.5 26 28.5 18.5 33.5 14 41 14L59 14C66.5 14 71.5 18.5 71.5 26 71.1 31.5 70.4 37.5 69.5 42.5 76 47.5 80.5 55.5 80.5 67 80.5 80 74 88.5 62 88.5Z' fill='white'/%3E%3Crect x='36' y='21' width='28' height='13' rx='6' fill='black'/%3E%3Cpolyline points='33,78 47.5,65 57.5,71 69,58' fill='none' stroke='black' stroke-width='4.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cg fill='black'%3E%3Ccircle cx='33' cy='78' r='5'/%3E%3Ccircle cx='47.5' cy='65' r='5'/%3E%3Ccircle cx='57.5' cy='71' r='5'/%3E%3Ccircle cx='69' cy='58' r='5'/%3E%3C/g%3E%3C/mask%3E%3C/defs%3E%3Crect width='100' height='100' fill='url(%23g)' mask='url(%23m)'/%3E%3C/svg%3E">
+<link rel="preload" as="font" type="font/woff2" href="fonts/MonaSans.woff2" crossorigin>
 <style>
+/* Mona Sans — ten sam krój i ten sam plik co w aplikacji (OFL 1.1, github/mona-sans).
+   Font zmienny: oś wagi 200–900, oś szerokości 75–125%. Deklarowany zakres `font-weight`
+   sprawia, że przeglądarka steruje osią `wght` wprost — dzięki temu nie trafiamy w pomieszane
+   nazwy instancji (domyślna to ExtraLight), co jest znaną pułapką tego kroju. */
+@font-face{
+  font-family:"Mona Sans";
+  src:url("fonts/MonaSans.woff2") format("woff2");
+  font-weight:200 900;
+  font-stretch:75% 125%;
+  font-style:normal;
+  font-display:swap;
+}
 :root{
   --bg:#08080C;--panel:#14141B;--ink:#F4F3F8;--sub:#A6A4B6;--faint:#6A6880;
   --violet:#9180FF;--blue-soft:#4BA3FF;--line:rgba(255,255,255,.08);--line2:rgba(255,255,255,.15);
   --grad:linear-gradient(120deg,#9180FF 0%,#6E8CFF 46%,#0A84FF 100%);
-  --font:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --font:"Mona Sans",-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-padding-top:90px}
@@ -89,10 +102,10 @@ footer{border-top:1px solid var(--line);padding:34px 0 56px;margin-top:40px}
     <p class="updated">Dotyczy aplikacji Load na iPhone’a. Ostatnia aktualizacja: 29 lipca 2026.</p>
     <div class="tldr">
       <b>Krótko</b>
-      <p>Load nie zbiera żadnych danych. Aplikacja nie ma serwera i nie wykonuje żadnych zapytań
-        sieciowych — wszystko, co zapisujesz, zostaje w pamięci Twojego iPhone’a. Nie ma kont,
-        analityki, reklam ani narzędzi śledzących. Jedyne dane, które do mnie trafiają, to adres
-        e-mail, jeśli sam napiszesz w sprawie testów.</p>
+      <p>Load nie zbiera Twoich danych. Nie ma serwera, zapytań sieciowych ani miejsca, do którego
+        wysyłana byłaby historia Twoich treningów. Wszystko zostaje na Twoim iPhonie. Nie ma kont,
+        analityki, reklam ani ukrytych narzędzi śledzących. Jeśli napiszesz do mnie w sprawie testów,
+        zobaczę tylko Twój adres e-mail. Poza tym Twój trening pozostaje tylko Twój.</p>
     </div>
   </div>
 </header>
@@ -100,18 +113,20 @@ footer{border-top:1px solid var(--line);padding:34px 0 56px;margin-top:40px}
 <main class="wrap">
 
   <h2 id="administrator">Kto odpowiada za aplikację</h2>
-  <p>Aplikację Load tworzy i wydaje <b>Jan Urbanowicz</b>, osoba fizyczna, Polska.
+  <p>Aplikację Load tworzy i wydaje <b>Jan Urbanowicz</b>.
     Kontakt: <a href="mailto:loadworkoutapp@icloud.com">loadworkoutapp@icloud.com</a>.
     W rozumieniu RODO jestem administratorem tych danych, które faktycznie do mnie trafiają —
     czyli wyłącznie korespondencji e-mail opisanej niżej.</p>
 
   <h2 id="dane">Jakie dane powstają w aplikacji</h2>
-  <p>Korzystając z Load, tworzysz dane treningowe: plany, sesje, serie z ciężarem i powtórzeniami,
-    notatki, pomiary ciała, ustawienia oraz — jeśli je podasz — imię używane w powitaniu.
-    Wszystkie te dane <b>zapisują się lokalnie na urządzeniu</b> i nie są nigdzie wysyłane.</p>
-  <p>Nie mam do nich dostępu. Nie istnieje serwer, na który mogłyby trafić: w kodzie aplikacji
-    nie ma ani jednego zapytania sieciowego, żadnego zewnętrznego SDK, biblioteki analitycznej
-    ani reklamowej.</p>
+  <p>Podczas korzystania z Load tworzysz własne dane: plany, treningi, serie z ciężarem
+    i powtórzeniami, notatki, pomiary ciała, ustawienia oraz — jeśli zdecydujesz się je podać —
+    imię używane w powitaniu.</p>
+  <p>Wszystkie te informacje są zapisywane lokalnie na Twoim iPhonie i <b>nigdzie nie są
+    wysyłane</b>. Nie mam do nich dostępu i nie istnieje miejsce, do którego mogłyby trafić.</p>
+  <p>Load nie posiada serwera. W kodzie aplikacji nie ma zapytań sieciowych, zewnętrznych SDK,
+    bibliotek analitycznych ani narzędzi reklamowych. Twoja historia treningów pozostaje
+    tylko Twoja.</p>
 
   <h2 id="icloud">Kopia w iCloud (opcjonalna)</h2>
   <p>W Ustawieniach możesz włączyć synchronizację przez iCloud. Wtedy dane trafiają do
@@ -122,7 +137,7 @@ footer{border-top:1px solid var(--line);padding:34px 0 56px;margin-top:40px}
     usuniesz w ustawieniach swojego Apple ID.</p>
 
   <h2 id="health">Apple Health</h2>
-  <p>Jeśli sam o to poprosisz, Load może odczytać Twoją <b>masę ciała</b> z aplikacji Zdrowie,
+  <p>Jeśli o to poprosisz, Load może odczytać Twoją <b>masę ciała</b> z aplikacji Zdrowie,
     żeby nie trzeba było przepisywać jej ręcznie. Zakres jest ograniczony do odczytu — aplikacja
     <b>nie zapisuje</b> niczego do Zdrowia i nie czyta żadnych innych typów danych zdrowotnych.
     Odczytana waga zostaje na urządzeniu, tak jak reszta dziennika.</p>
@@ -131,10 +146,12 @@ footer{border-top:1px solid var(--line);padding:34px 0 56px;margin-top:40px}
     udostępniane komukolwiek.</p>
 
   <h2 id="ai">Funkcje Apple Intelligence</h2>
-  <p>Na urządzeniach obsługujących Apple Intelligence Load używa modelu systemowego do dwóch rzeczy:
-    rozpoznawania wklejonej notatki treningowej oraz krótkiego podsumowania tygodnia.
-    <b>Przetwarzanie odbywa się w całości na urządzeniu</b> — model działa lokalnie, a treść nie
-    opuszcza telefonu. Podsumowanie tygodnia można wyłączyć w Ustawieniach.</p>
+  <p>Na urządzeniach obsługujących Apple Intelligence Load korzysta z modelu systemowego tylko
+    w dwóch miejscach: przy rozpoznawaniu wklejonych notatek treningowych oraz przy tworzeniu
+    krótkiego podsumowania tygodnia.</p>
+  <p>Całe przetwarzanie <b>odbywa się lokalnie</b>. Model działa na urządzeniu, a treść Twoich
+    danych nie opuszcza telefonu. Podsumowanie tygodnia możesz w każdej chwili wyłączyć
+    w Ustawieniach.</p>
 
   <h2 id="schowek">Schowek, powiadomienia, widżety</h2>
   <ul>
